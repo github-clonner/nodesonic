@@ -1,7 +1,5 @@
-/*
-  add id_martist ?!
-*/
-
+/** @class Music */
+//add id_martist ?!
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Music', {
       id: {

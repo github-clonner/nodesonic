@@ -1,4 +1,5 @@
-/*jshint node:true */
+/** @module Watcher */
+/* jshint node:true */
 'use strict';
 
 var fs = require('fs'),

@@ -1,4 +1,5 @@
-/*jshint node:true */
+/** @module Codecs */
+/* jshint node:true */
 'use strict';
 
 var util = require('util'),

@@ -1,3 +1,4 @@
+/** @class Album */
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Album', {
       id: {

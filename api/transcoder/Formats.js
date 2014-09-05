@@ -1,4 +1,5 @@
-/*jshint node:true */
+/** @module Formats */
+/* jshint node:true */
 'use strict';
 
 var util = require('util'),
