@@ -3,7 +3,9 @@ nodesonic
 
 #### config ####
 /config/config.json (file used by sequelize).
+
 /config/server.json (default file).
+
 /config/server/{YOUR_USERNAME_IN_ENVIRONNEMENT}.json (default file).
 
 #### database ####
