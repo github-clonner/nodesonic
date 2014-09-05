@@ -1,0 +1,32 @@
+{
+  "name": "nodesonic",
+  "description": "",
+  "version": "0.1.0",
+  "author": {
+    "name": "Louis de Courcel",
+    "email": "einsenhorn@gmail.com"
+  },
+  "dependencies": {
+    "bunyan": "^1.0.1",
+    "chalk": "^0.5.1",
+    "commander": "^2.3.0",
+    "fluent-ffmpeg": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git#2.x",
+    "lodash": "^2.4.1",
+    "mysql": "^2.4.3",
+    "restify": "^2.8.2",
+    "sequelize": "^1.7.10",
+    "sequelize-cli": "^0.2.5"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-compress": "^0.9.1",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-uglify": "^0.5.0",
+    "grunt-jsdoc": "^0.6.0",
+    "grunt-shell": "^0.7.0",
+    "jsdoc": "^3.3.0-alpha9"
+  },
+  "scripts": {
+    "start": "/Users/einsenhorn/Workspace/nodeWebkit/node-webkit.app/Contents/MacOS/node-webkit"
+  }
+}
