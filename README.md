@@ -5,8 +5,6 @@ nodesonic
 /config/config.json
 fichier utilise par sequelize.
 
-#### - config ####
-
 #### + database ####
 > sudo mysql
 
@@ -19,20 +17,14 @@ GRANT ALL ON nodesonic.* TO 'nodesonic'@'localhost';
 
 USE nodesonic;
 
-#### - database ####
-
 #### + database migration|install ####
-# > node_modules/.bin/sequelize
+> node_modules/.bin/sequelize
 > node_modules/.bin/sequelize db:migrate
-# > node_modules/.bin/sequelize db:migrate:undo
-#### - database migration|install ####
+> node_modules/.bin/sequelize db:migrate:undo
 
 #### + launch server ####
 
 node kernel.js | node_modules/.bin/bunyan
 
-#### - launch server ####
-
 #### + generate doc ####
 > grunt jsdoc
-#### - generate doc ####
