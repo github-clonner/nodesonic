@@ -97,7 +97,7 @@ module.exports = function(grunt, task, root) {
               /* must be optimized ! :D */
               if (artistName !== null && albumName !== null) {
                 Artist.findOrCreate({ name: artistName }).success(function(artist) {
-                  Album.findOrCreate({ id_artist: artist.getDataValue('id'), name: albumName }).success(function(album) {
+                  Album.findOrCreate({ id_artist: artist.getDataValue('id'), name: albumName, path: file.getPath() }).success(function(album) {
                     Music
                       .create({ id_album: album.getDataValue('id'), path: file.getFullPath(), title: title })
                       .complete(complete)

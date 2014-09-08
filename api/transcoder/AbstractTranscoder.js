@@ -11,6 +11,7 @@ util.inherits(AbstractTranscoder, emitter);
 /**
   @abstract
   @constructor
+  @params {object} options
 */
 function AbstractTranscoder(options) {
   var codecs = options.codecs,
@@ -40,6 +41,7 @@ function AbstractTranscoder(options) {
 
 /**
   @method
+  @description Transcode something.
   @fires AbstractTranscoder#transcode
 */
 AbstractTranscoder.prototype.transcode = function() {
@@ -77,11 +79,18 @@ AbstractTranscoder.prototype._transcodeIsAvailable = function() {
   return new Error('No format available for `' + formatNames.join(', ') + '`.');
 };
 
-/** @abstract */
+/**
+  @description This method should be override.
+  @abstract
+*/
 AbstractTranscoder.prototype.__transcode = function() {
   throw new Error('must be overriden.');
 };
 
+/**
+  @method
+  @description get File Size calcultated with bitrate and duration.
+*/
 AbstractTranscoder.prototype.getFileSize = function() {
   if (this.bitrate === 0 || this.duration === 0) {
     return 0;
@@ -90,66 +99,4 @@ AbstractTranscoder.prototype.getFileSize = function() {
   return ((this.bitrate * this.duration) / 8);
 };
 
-/**
- @constructor
- @description Class used for transcode audio file.
- @param {object} options
-*/
-function Audio(options) {
-  AbstractTranscoder.prototype.constructor.call(this, options);
-}
-
-util.inherits(Audio, AbstractTranscoder);
-
-Audio.prototype.__transcode = function() {
-  var options = this.options,
-      onStart = options.onStart,
-      onProgress = options.onProgress,
-      onEnd = options.onEnd,
-      onError = options.onError,
-      output = this.options.output;
-
-  this.command = new ffmpeg({ source: this.input, nolog: true });
-
-  if (!this.command) {
-    throw new Error('Something went wrong withL `' + this.path + '`.');
-  }
-
-  this.command.
-    withNoVideo().
-    withAudioCodec('libmp3lame').
-    withAudioBitrate(this.bitrate).
-    withAudioChannels(2).
-    fromFormat(this.format).
-    toFormat('mp3');
-
-  /* onStart(commandline) */
-  if (typeof onStart === 'function') {
-    this.command.on('start', onStart);
-  }
-
-  /* onProgress(process) */
-  if (typeof onProgress === 'function') {
-    this.command.on('progress', onProgress);
-  }
-
-  /* onEnd(commandline) */
-  if (typeof onEnd === 'function') {
-    this.command.on('end', onEnd);
-  }
-
-  /* onError(commandline) */
-  if (typeof onError === 'function') {
-    this.command.on('error', onError);
-  }
-
-  if (typeof output.path === 'string') {
-    this.command.saveToFile(output.path);
-  } else if (typeof output.stream === 'object') {
-    this.command.writeToStream(output.stream, output.options || {});
-  }
-
-  return this.command;
-};
-
-exports.Audio = Audio;
+module.exports = AbstractTranscoder;

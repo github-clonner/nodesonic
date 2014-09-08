@@ -23,7 +23,8 @@ function AlbumTable(migration, DataTypes) {
       autoIncrement: true
     },
     id_artist: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    path: DataTypes.STRING
   });
 }
 

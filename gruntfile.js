@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         path = require('path'),
         p, stat;
 
-    p = path.join(__dirname, source);
+    p = path.resolve(source);
 
     stat = fs.statSync(p);
     if (stat.isDirectory()) {

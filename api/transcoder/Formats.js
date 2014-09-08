@@ -1,4 +1,4 @@
-/** @module Formats */
+/** @module Transcoder */
 /* jshint node:true */
 'use strict';
 
@@ -29,16 +29,15 @@ Formats.prototype.load = function(callback) {
 
     if (typeof callback === 'function' &&
         callback(err, formats) === false) {
-      me.emit('error', new Error('formats callback return false.'));
+      me.emit('load', new Error('formats callback return false.'), formats);
       return false;
     }
 
     if (err === null) {
       me.loaded = true;
-      me.emit('load', formats);
-    } else {
-      me.emit('error', err);
     }
+
+    me.emit('load', err, formats);
   });
 };
 

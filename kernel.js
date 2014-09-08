@@ -4,30 +4,32 @@
 var fs = require('fs'),
     restify = require('restify'),
     Sequelize = require('sequelize'),
-    Setting = require(__dirname + '/api/setting/Setting.js');
+    Setting = require(__dirname + '/api/setting/Setting.js'),
+    Codecs = require(__dirname + '/api/transcoder/Codecs.js'),
+    Formats = require(__dirname + '/api/transcoder/Formats.js');
 
 // @TODO regarder restify Serve Static
 
 /** + Setting */
-var setting = new Setting(__dirname + '/config/server.json');
-setting.set({
-  application: {
-    name: 'nodesonic'
-  },
-  paths: {
-    root: __dirname,
-    api: __dirname + '/api',
-    source: __dirname + '/source',
-    cache: __dirname + '/cache',
-    config: __dirname + '/config',
-    model: __dirname + '/models',
-    log: __dirname + '/log',
-    audio: __dirname + '/audio'
-  },
-  info: {
-    version: '0.0.1'
-  }
-});
+var setting = new Setting(__dirname + '/config/server.json')
+  .set({
+    application: {
+      name: 'nodesonic'
+    },
+    paths: {
+      root: __dirname,
+      api: __dirname + '/api',
+      source: __dirname + '/source',
+      cache: __dirname + '/cache',
+      config: __dirname + '/config',
+      model: __dirname + '/models',
+      log: __dirname + '/log',
+      audio: __dirname + '/audio'
+    },
+    info: {
+      version: '0.0.1'
+    }
+  });
 
 var unixUser = process.env.USER;
 if (unixUser) {
@@ -73,6 +75,12 @@ if (setting.get('log.enable') === true) {
 var server = restify.createServer(options);
 
 server.settings = setting.lock();
+server.codecs = new Codecs();
+server.formats = new Formats();
+
+server.formats.once('load', onLoadFormats);
+server.codecs.once('load', onLoadCodecs);
+
 require('./api/ORM/Init.js')(server, function(err) {
   if (!!err) {
     server.log.error('Unable to connect to the database.');
@@ -80,10 +88,21 @@ require('./api/ORM/Init.js')(server, function(err) {
     return ;
   }
 
+  server.codecs.load();
+  server.formats.load();
+});
+
+
+
+
+
+
+
+function launchServer(server) {
   require('./api/routes.js')(server);
   server.log.info('SQL Connection has been established successfully.');
 
-  server.listen(setting.get('port'), function() {
+  server.listen(server.settings.get('port'), function() {
     server.log.info('%s listening at %s', server.name, server.url);
   });
 
@@ -91,4 +110,28 @@ require('./api/ORM/Init.js')(server, function(err) {
     server.log.info('server shutdown.');
     process.exit();
   });
-});
+}
+
+function onLoadFormats(err, formats) {
+  if (!!err) {
+    server.log.error('Formats load failed.');
+    server.log.error(err);
+  } else {
+    server.log.info('Formats loaded.');
+    if (server.formats.loaded && server.codecs.loaded) {
+      launchServer(server);
+    }
+  }
+}
+
+function onLoadCodecs(err, codecs) {
+  if (!!err) {
+    server.log.error('Codecs load failed.');
+    server.log.error(err);
+  } else {
+    server.log.info('Codecs loaded.');
+    if (server.formats.loaded && server.codecs.loaded) {
+      launchServer(server);
+    }
+  }
+}

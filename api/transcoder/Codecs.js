@@ -1,4 +1,4 @@
-/** @module Codecs */
+/** @module Transcoder */
 /* jshint node:true */
 'use strict';
 
@@ -9,6 +9,9 @@ var util = require('util'),
 util.inherits(Codecs, emitter);
 module.exports = Codecs;
 
+/**
+  @constructor
+*/
 function Codecs() {
   emitter(this);
 
@@ -16,6 +19,9 @@ function Codecs() {
   this.codecs = {};
 }
 
+/**
+  @fire load
+*/
 Codecs.prototype.load = function(callback) {
   var me = this;
 
@@ -26,16 +32,15 @@ Codecs.prototype.load = function(callback) {
 
     if (typeof callback === 'function' &&
         callback(err, codecs) === false) {
-      me.emit('error', new Error('codecs callback return false.'));
+      me.emit('load', new Error('codecs callback return false.'), codecs);
       return false;
     }
 
     if (err === null) {
       me.loaded = true;
-      me.emit('load', codecs);
-    } else {
-      me.emit('error', err);
     }
+
+    me.emit('load', err, codecs);
   });
 };
 

@@ -63,6 +63,8 @@ Setting.prototype.set = function(name, value) {
       }
     }
   }
+
+  return this;
 };
 
 /**

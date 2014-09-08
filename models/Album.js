@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER
       },
       id_artist: DataTypes.INTEGER,
-      name: DataTypes.STRING
+      name: DataTypes.STRING,
+      path: DataTypes.STRING
     }, {
       tableName: 'album',
       timestamps: false,
