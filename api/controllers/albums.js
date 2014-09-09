@@ -13,33 +13,18 @@ var Controller = require('./controller.js');
 */
 function AlbumsController(server) {
 
-  AlbumsController.super_(server, 'albums', server.models.Album);
+  var uri = '/albums';
+  var model = server.models.Album;
 
-  server.get('/albums/:id/tracks', function(req, res, next) {
-    var id = decodeURIComponent(req.params.id);
+  AlbumsController.super_(server, uri, model);
 
-    this.models.Album.find({ where: { id: id } })
-      .complete(function(err, album) {
-        if (err) {
-          res.send(500, err);
-          return next();
-        }
-
-        if (album === null) {
-          res.send(404, null);
-          next();
-        } else {
-          album.getTracks().complete(function(err, tracks) {
-            if (err) {
-              res.send(500, err);
-              return next();
-            }
-
-            res.send(tracks);
-            next();
-          });
-        }
-     });
+  server.get(uri+'/:id/tracks', function(req, res, next) {
+    req.entity.getTracks()
+      .done(function(err, albums) {
+        next.ifError(err)
+        res.send(albums);
+        next();
+      });
   });
 
 }

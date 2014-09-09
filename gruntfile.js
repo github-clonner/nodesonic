@@ -40,7 +40,7 @@ module.exports = function(grunt) {
     shell: {
       server: {
           command: function () {
-              return 'node kernel.js | node_modules/.bin/bunyan ';
+              return 'nodemon kernel.js | node_modules/.bin/bunyan ';
           }
       }/*,
       nodewebkit: {
