@@ -6,6 +6,7 @@ var fs = require('fs');
 var util = require('util');
 var Audio = require('../transcoder/Audio');
 var Controller = require('./controller.js');
+var restify = require('restify');
 
 
 /**
@@ -40,52 +41,52 @@ function TracksController(server) {
 
     var music = req.entity;
     var path = music.getDataValue('path');
-    if (fs.existsSync(path)) {
-      res.status(206);
-      res.header('Transfer-Encoding', 'chunked');
-      res.header('Content-type', 'audio/mpeg');
-      res.header('Accept-Ranges', 'bytes');
-      res.header('Connection', 'close');
 
-      var inStream = fs.createReadStream(path, options),
-          e = new Audio({
-            input: inStream,
-            output: {
-              stream: res,
-              options: { end: false }
-            },
-            onError: function(err) {
-              server.log.error(err);
-              res.send(500);
-              next();
-            },
-            onEnd: function() {
-              res.status(200);
-              next();
-            },
-            codecs: server.codecs,
-            formats: server.formats
-          }).on('transcode', function() {
-            var total = e.getFileSize();
-
-            if (!end) {
-              end = total - 1;
-            }
-
-            res.header('Content-Range', 'bytes ' + start + '-' + end + '/' + total);
-            res.header('Content-Length', end - start + 1);
-          }).on('error', function(err) {
-            server.log.error(err);
-            res.send(500);
-            next();
-          });
-
-        e.transcode();
-
-    } else {
-      res.send(404);
-      next(false);
+    if (!fs.existsSync(path)) {
+      return next(new restify.errors.InternalError('File path does not exist'));
     }
+
+    res.status(206);
+    res.header('Transfer-Encoding', 'chunked');
+    res.header('Content-type', 'audio/mpeg');
+    res.header('Accept-Ranges', 'bytes');
+    res.header('Connection', 'close');
+
+    var inStream = fs.createReadStream(path, options);
+    var options = {
+      input: inStream,
+      output: {
+        stream: res,
+        options: { end: false }
+      },
+      onError: next.ifError,
+      onEnd: function() {
+        res.status(200);
+        next();
+      },
+      codecs: server.codecs,
+      formats: server.formats
+    };
+
+    var audio = new Audio(options);
+
+    audio.on('transcode', function() {
+      var total = audio.getFileSize();
+      if (!end) {
+        end = total - 1;
+      }
+
+      res.header('Content-Range', 'bytes ' + start + '-' + end + '/' + total);
+      res.header('Content-Length', end - start + 1);
+    });
+
+    audio.on('error', function(err) {
+      server.log.error(err);
+      res.send(500);
+      next();
+     });
+
+    audio.transcode();
   });
 
 }

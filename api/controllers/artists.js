@@ -30,6 +30,4 @@ function ArtistsController(server) {
 
 util.inherits(ArtistsController, Controller); 
 
-
-
 module.exports = ArtistsController;

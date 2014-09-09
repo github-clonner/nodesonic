@@ -22,7 +22,7 @@ function Controller(server, uri, model) {
           }
           else {
             req.entity = entity;
-            return next()
+            return next();
           }
         });
     }
@@ -35,7 +35,7 @@ function Controller(server, uri, model) {
         next.ifError(err);
         res.send(artists);
         next();
-      })
+      });
   });
 
   server.get(uri+'/:id', function(req, res, next) {
