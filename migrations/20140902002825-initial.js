@@ -2,7 +2,7 @@ module.exports = {
   up: function(migration, DataTypes, done) {
     AlbumTable(migration, DataTypes);
     ArtistTable(migration, DataTypes);
-    musicTable(migration, DataTypes);
+    TrackTable(migration, DataTypes);
 
     done();
   },
@@ -39,8 +39,8 @@ function ArtistTable(migration, DataTypes) {
   });
 }
 
-function musicTable(migration, DataTypes) {
-  migration.createTable('music', {
+function TrackTable(migration, DataTypes) {
+  migration.createTable('track', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,

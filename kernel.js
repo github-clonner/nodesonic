@@ -99,7 +99,12 @@ require('./api/ORM/Init.js')(server, function(err) {
 
 
 function launchServer(server) {
+
   require('./api/routes.js')(server);
+  require('./api/controllers/artists.js')(server);
+  require('./api/controllers/albums.js')(server);
+  require('./api/controllers/tracks.js')(server);
+  
   server.log.info('SQL Connection has been established successfully.');
 
   server.listen(server.settings.get('port'), function() {

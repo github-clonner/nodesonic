@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       underscored: true,
       classMethods: {
         associate: function(models) {
-          this.hasMany(models.Music, { as: 'Tracks', foreignKey: 'id_album' });
+          this.hasMany(models.Track, { as: 'Tracks', foreignKey: 'id_album' });
           this.belongsTo(models.Artist, { as: 'Artist' });
            // associations can be defined here
         }

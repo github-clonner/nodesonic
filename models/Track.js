@@ -1,7 +1,7 @@
-/** @class Music */
+/** @class Track */
 //add id_martist ?!
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Music', {
+  return sequelize.define('Track', {
       id: {
         primaryKey: true,
         autoIncrement: true,
@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
       path: DataTypes.STRING,
       title: DataTypes.STRING
     }, {
-      tableName: 'music',
+      tableName: 'track',
       timestamps: false,
       underscored: true,
       classMethods: {

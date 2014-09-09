@@ -59,7 +59,7 @@ module.exports = function(grunt, task, root) {
   var sequelize = new Sequelize(profile.database, profile.username, profile.password, profile),
       Album = require(root + '/models/Album.js')(sequelize, Sequelize),
       Artist = require(root + '/models/Artist.js')(sequelize, Sequelize),
-      Music = require(root + '/models/Music.js')(sequelize, Sequelize);
+      Track = require(root + '/models/Track.js')(sequelize, Sequelize);
 
   sequelize
     .authenticate()
@@ -98,14 +98,14 @@ module.exports = function(grunt, task, root) {
               if (artistName !== null && albumName !== null) {
                 Artist.findOrCreate({ name: artistName }).success(function(artist) {
                   Album.findOrCreate({ id_artist: artist.getDataValue('id'), name: albumName, path: file.getPath() }).success(function(album) {
-                    Music
+                    Track
                       .create({ id_album: album.getDataValue('id'), path: file.getFullPath(), title: title })
                       .complete(complete)
                     ;
                   });
                 });
               } else {
-                Music
+                Track
                   .create({ path: file.getFullPath(), title: title })
                   .complete(complete)
                 ;
