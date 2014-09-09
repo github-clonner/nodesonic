@@ -41,8 +41,8 @@ module.exports = function(grunt, task, root) {
   grunt.log.writeln('import audio from `%s` (default: %s).', pathAudio, defaultAudio);
   grunt.log.writeln('extensions `%s` (default: %s).', extensions.join(' '), defaultExtensions);
   if (cache) {
-    task.requiresConfig('paths.cache');
-    pathCache = path.resolve(root + grunt.config.get('paths.cache') + '/audio.json');
+    task.requiresConfig('paths.cache.audio');
+    pathCache = path.resolve(root + grunt.config.get('paths.cache.audio'));
     grunt.log.writeln('cache enable (`%s`).', pathCache);
     options.cache = pathCache;
   } else {

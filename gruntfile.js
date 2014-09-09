@@ -1,4 +1,5 @@
-var path = require('path'),
+var fs = require('fs'),
+    path = require('path'),
     chalk = require('chalk');
 
 module.exports = function(grunt) {
@@ -61,7 +62,9 @@ module.exports = function(grunt) {
 
   grunt.config.set('paths', {
     audio: '/audio',
-    cache: '/cache'
+    cache: {
+      audio: '/cache/audio.json'
+    }
   });
 
   grunt.loadNpmTasks('grunt-shell');
@@ -69,6 +72,20 @@ module.exports = function(grunt) {
   // grunt.loadNpmTasks('grunt-contrib-concat');
   // grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-compress');
+
+  grunt.registerTask('nodesonic:audio:import:cache:remove', chalk.green('remove import cache.'), function() {
+    var done = this.async();
+
+    this.requiresConfig('paths.cache.audio');
+    fs.unlink(__dirname + grunt.config.get('paths.cache.audio'), function(err) {
+      if (err) {
+        grunt.log.error(err.message);
+        done(false);
+      } else {
+        done(true);
+      }
+    });
+  });
 
   grunt.registerTask('nodesonic:audio:import', chalk.green('import in database some audio files\n[path] [extensions] [cache] [profile]'), function() {
     require('./grunt/nodesonic/import/audio.js')(grunt, this, __dirname);

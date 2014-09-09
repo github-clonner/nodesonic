@@ -2,7 +2,9 @@
 /* jshint node:true */
 'use strict';
 
+var fs = require('fs');
 var util = require('util');
+var Audio = require('../transcoder/Audio');
 var Controller = require('./controller.js');
 
 
@@ -12,33 +14,33 @@ var Controller = require('./controller.js');
   @param {object} server - Current restify server.
 */
 function TracksController(server) {
-  TracksController.super_(server, 'tracks', server.models.Track);
+  var uri = '/tracks';
+  var model = server.models.Track;
 
-  // A refactorer
-  // if range not found > start = 0; end=filesize
-  server.get('/tracks/:id/stream', function(req, res, next) {
-    var range = req.headers.range || 0;
+  TracksController.super_(server, uri, model);
+
+  server.get(uri+'/:id/stream', function(req, res, next) {
+    var range = req.headers.range;
+    var start, end;
     var options = {
       flags: 'r',
       autoClose: true
     };
 
     if (typeof range === 'undefined') {
-      res.send('range undefined.');
-      next();
-    }
-
-    music = req.entity;
-    var path = music.getDataValue('path');
-    if (fs.existsSync(path)) {
+      start = options.start = 0;
+    } else {
       var parts = range.replace(/bytes=/, '').split('-');
-      var start = options.start = parseInt(parts[0], 10);
-      var end;
+      start = options.start = parseInt(parts[0], 10);
 
       if (parts[1]) {
         options.end = end = parseInt(parts[1], 10);
       }
+    }
 
+    var music = req.entity;
+    var path = music.getDataValue('path');
+    if (fs.existsSync(path)) {
       res.status(206);
       res.header('Transfer-Encoding', 'chunked');
       res.header('Content-type', 'audio/mpeg');
@@ -53,18 +55,17 @@ function TracksController(server) {
               options: { end: false }
             },
             onError: function(err) {
-              console.log('An error occurred: ' + err.message);
+              server.log.error(err);
+              res.send(500);
               next();
             },
             onEnd: function() {
               res.status(200);
-              console.log('end');
               next();
             },
             codecs: server.codecs,
             formats: server.formats
           }).on('transcode', function() {
-            console.log('transcode');
             var total = e.getFileSize();
 
             if (!end) {
@@ -74,19 +75,21 @@ function TracksController(server) {
             res.header('Content-Range', 'bytes ' + start + '-' + end + '/' + total);
             res.header('Content-Length', end - start + 1);
           }).on('error', function(err) {
-            console.log('An error occurred: ' + err.message);
+            server.log.error(err);
+            res.send(500);
+            next();
           });
 
         e.transcode();
 
     } else {
-      res.send(200, 'file not found');
-      return false;
+      res.send(404);
+      next(false);
     }
   });
 
 }
 
-util.inherits(TracksController, Controller); 
+util.inherits(TracksController, Controller);
 
 module.exports = TracksController;
