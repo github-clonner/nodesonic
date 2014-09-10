@@ -6,8 +6,10 @@ var fs = require('fs'),
     Sequelize = require('sequelize'),
     Setting = require(__dirname + '/api/setting/Setting.js'),
     Codecs = require(__dirname + '/api/transcoder/Codecs.js'),
-    Formats = require(__dirname + '/api/transcoder/Formats.js');
-
+    Formats = require(__dirname + '/api/transcoder/Formats.js'),
+    ArtistsController = require('./api/controllers/artists.js'),
+    AlbumsController = require('./api/controllers/albums.js'),
+    TracksController = require('./api/controllers/tracks.js');
 // @TODO regarder restify Serve Static
 
 /** + Setting */
@@ -78,6 +80,8 @@ server.settings = setting.lock();
 server.codecs = new Codecs();
 server.formats = new Formats();
 
+console.log(onLoadFormats);
+
 server.formats.once('load', onLoadFormats);
 server.codecs.once('load', onLoadCodecs);
 
@@ -92,19 +96,13 @@ require('./api/ORM/Init.js')(server, function(err) {
   server.formats.load();
 });
 
-
-
-
-
-
-
 function launchServer(server) {
 
   require('./api/routes.js')(server);
-  require('./api/controllers/artists.js')(server);
-  require('./api/controllers/albums.js')(server);
-  require('./api/controllers/tracks.js')(server);
-  
+  ArtistsController(server);
+  AlbumsController(server);
+  TracksController(server);
+
   server.log.info('SQL Connection has been established successfully.');
 
   server.listen(server.settings.get('port'), function() {
@@ -118,7 +116,7 @@ function launchServer(server) {
 }
 
 function onLoadFormats(err, formats) {
-  if (!!err) {
+  if (err) {
     server.log.error('Formats load failed.');
     server.log.error(err);
   } else {
@@ -130,7 +128,7 @@ function onLoadFormats(err, formats) {
 }
 
 function onLoadCodecs(err, codecs) {
-  if (!!err) {
+  if (err) {
     server.log.error('Codecs load failed.');
     server.log.error(err);
   } else {

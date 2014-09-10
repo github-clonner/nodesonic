@@ -14,11 +14,12 @@ var restify = require('restify');
   @constructor
   @param {object} server - Current restify server.
 */
-function TracksController(server) {
+
+module.exports = function(server) {
   var uri = '/tracks';
   var model = server.models.Track;
 
-  TracksController.super_(server, uri, model);
+  Controller(server, uri, model);
 
   server.get(uri+'/:id/stream', function(req, res, next) {
     var range = req.headers.range;
@@ -59,7 +60,10 @@ function TracksController(server) {
         stream: res,
         options: { end: false }
       },
-      onError: next.ifError,
+      onError: function(err) {
+        console.log('An error occurred: ' + err.message);
+        next();
+      },
       onEnd: function() {
         res.status(200);
         next();
@@ -90,7 +94,3 @@ function TracksController(server) {
   });
 
 }
-
-util.inherits(TracksController, Controller);
-
-module.exports = TracksController;

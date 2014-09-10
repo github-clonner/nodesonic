@@ -10,12 +10,12 @@ var restify = require('restify');
   @constructor
   @param {object} server - Current restify server.
 */
-function Controller(server, uri, model) {
+module.exports = function (server, uri, model) {
 
   server.use(function(req, res, next) {
     if (req.params.id) {
       return model.find(req.params.id)
-        .complete(function(err, entity) {
+        .done(function(err, entity) {
           next.ifError(err);
           if (entity === null) {
             return next(new restify.ResourceNotFoundError());
@@ -28,7 +28,7 @@ function Controller(server, uri, model) {
     }
     next();
   });
-
+  
   server.get(uri, function(req, res, next) {
     model.findAll()
       .done(function(err, artists){
@@ -53,5 +53,3 @@ function Controller(server, uri, model) {
   });
 
 }
-
-module.exports = Controller;

@@ -5,18 +5,16 @@
 var util = require('util');
 var Controller = require('./controller.js');
 
-
 /**
   artists controller
   @constructor
   @param {object} server - Current restify server.
 */
-function AlbumsController(server) {
-
+module.exports = function(server) {
   var uri = '/albums';
   var model = server.models.Album;
 
-  AlbumsController.super_(server, uri, model);
+  Controller(server, uri, model);
 
   server.get(uri+'/:id/tracks', function(req, res, next) {
     req.entity.getTracks()
@@ -28,7 +26,3 @@ function AlbumsController(server) {
   });
 
 }
-
-util.inherits(AlbumsController, Controller); 
-
-module.exports = AlbumsController;
