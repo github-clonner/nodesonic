@@ -1,0 +1,14 @@
+{
+  "paths.audio":  "/Users/einsenhorn/Music/iTunes/iTunes Media/Music",
+  "log": {
+    "enable":     true
+  },
+  "database": {
+    "username": "nodesonic",
+    "password": "nodesonic",
+    "database": "nodesonic",
+    "host":     "127.0.0.1",
+    "dialect":  "mysql",
+    "logging":  false
+  }
+}

@@ -33,11 +33,11 @@ var setting = new Setting(__dirname + '/config/server.json')
     }
   });
 
-var unixUser = process.env.USER;
-if (unixUser) {
-  var unixUserPath = setting.get('paths.config') + '/server/' + unixUser + '.json';
-  if (fs.existsSync(unixUserPath)) {
-    setting.override(unixUserPath);
+var user = /^win/.test(process.platform) ? process.env.USERNAME : process.env.USER;
+if (user) {
+  var userPath = setting.get('paths.config') + '/server/' + user + '.json';
+  if (fs.existsSync(userPath)) {
+    setting.override(userPath);
   }
 }
 /** - Setting */
